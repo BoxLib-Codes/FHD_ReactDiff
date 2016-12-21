@@ -23,7 +23,7 @@
 
   ! Controls for number of steps between actions (for HydroGrid see below)
   !----------------------
-  max_step = 11000                 ! maximum number of time steps
+  max_step = 10000                 ! maximum number of time steps
   plot_int = 0                     ! interval for writing a plotfile (for visit/amrvis)
                                    ! (no plot files for plot_int<=0)
   chk_int = -1                     ! interval for writing a checkpoint
@@ -182,4 +182,6 @@
                                        ! if positive, it writes average number densities in the system (fort.9)
                                        ! if negative, it writes the total number of molecules in the system (fort.21)
 
+  hist_int = 1000                      ! cell number densities of all cells are generated if time_step % hist_int == 0
+                                       ! if zero, no output
 /
