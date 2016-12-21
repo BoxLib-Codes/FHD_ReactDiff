@@ -66,15 +66,19 @@ contains
 
     call copy(n_serial,1,n_in(1),1,nspecies)
 
-    np => dataptr(n_serial,1)
+    if (parallel_IOProcessor()) then
 
-    do k=lbound(np,3), ubound(np,3)
-    do j=lbound(np,2), ubound(np,2)
-    do i=lbound(np,1), ubound(np,1)     
-       write(100,*) real(time), real(np(i,j,k,:)) 
-    end do
-    end do
-    end do
+       np => dataptr(n_serial,1)
+
+       do k=lbound(np,3), ubound(np,3)
+          do j=lbound(np,2), ubound(np,2)
+             do i=lbound(np,1), ubound(np,1)     
+                write(100,*) real(time), real(np(i,j,k,:)) 
+             end do
+          end do
+       end do
+       
+    end if
 
   end subroutine write_histogram
 
