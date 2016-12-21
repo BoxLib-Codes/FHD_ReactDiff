@@ -7,6 +7,7 @@ f90sources += checkpoint.f90
 f90sources += compute_n_steady.f90
 f90sources += compute_reaction_rates.f90
 f90sources += diffusive_n_fluxdiv.f90
+f90sources += histogram.f90
 f90sources += implicit_diffusion.f90
 f90sources += inhomogeneous_bc_val.f90
 f90sources += init_n.f90

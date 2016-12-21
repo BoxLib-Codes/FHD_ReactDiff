@@ -16,6 +16,7 @@ subroutine main_driver()
    use bl_rng_module
    use bl_random_module
    use multifab_physbc_module
+   use histogram_module
    use probin_common_module, only: prob_lo, prob_hi, n_cells, dim_in, max_grid_size, &
                                    plot_int, chk_int, print_int, seed, bc_lo, bc_hi, &
                                    restart, &
@@ -27,7 +28,7 @@ subroutine main_driver()
                                       inhomogeneous_bc_fix, temporal_integrator, &
                                       n_steps_write_avg, &
                                       model_file_init, model_file, integer_populations, &
-                                      use_bl_rng
+                                      use_bl_rng, hist_int
 
    use fabio_module
 
@@ -168,6 +169,8 @@ subroutine main_driver()
    end do
 
    deallocate(pmask)
+
+   call init_histogram(mla)
 
    ! allocate and build multifabs that will contain random numbers
    ! in this case, we only use one rng because we are using an Ito interpretation
@@ -329,6 +332,11 @@ subroutine main_driver()
          call write_plotfile_n(mla,n_old,dx,time,istep)
       end if
 
+      if (hist_int .gt. 0) then
+         ! write a histogram
+         call write_histogram(n_old,time,0)
+      end if
+
       if (chk_int .ge. 0) then
          ! write a checkpoint
          call checkpoint_write(mla,n_old,time,dt,istep)
@@ -337,7 +345,14 @@ subroutine main_driver()
    else ! Here we always write the starting point to check restarts are working
    
       istep = restart
-      call write_plotfile_n(mla,n_old,dx,time,restart)   
+
+      if (plot_int .gt. 0) then
+         call write_plotfile_n(mla,n_old,dx,time,restart)   
+      end if
+
+      if (hist_int .gt. 0) then
+         call write_histogram(n_old,time,istep)
+      end if
       
    end if   
 
@@ -412,6 +427,11 @@ subroutine main_driver()
              call write_plotfile_n(mla,n_new,dx,time,istep)
           end if
 
+          ! write a histogram
+          if (hist_int .gt. 0 .and. mod(istep,hist_int) .eq. 0) then
+             call write_histogram(n_new,time,istep)
+          end if
+
           ! write a checkpoint
           if (chk_int .gt. 0 .and. mod(istep,chk_int) .eq. 0) then
              call checkpoint_write(mla,n_new,time,dt,istep)
@@ -433,6 +453,8 @@ subroutine main_driver()
    !=======================================================
    ! Destroy multifabs and layouts
    !=======================================================
+
+   call destroy_histogram()
 
    call destroy_mass_stochastic(mla)
 

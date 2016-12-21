@@ -102,7 +102,10 @@ module probin_reactdiff_module
   integer, save :: n_steps_write_avg = 0 ! If non-zero, its absolute value tells how many steps before writing total densites
                                          ! If positive, it writes average number densities in the system
                                          ! If negative, it writes the total number of molecules in the system
-  
+  ! interval to write histograms
+  integer, save :: hist_int = 0
+
+
   namelist /probin_reactdiff/ nspecies, nreactions
   namelist /probin_reactdiff/ temporal_integrator, diffusion_type, midpoint_stoch_flux_type
   namelist /probin_reactdiff/ reaction_type, use_Poisson_rng, avg_type
@@ -112,7 +115,7 @@ module probin_reactdiff_module
   namelist /probin_reactdiff/ implicit_diffusion_rel_eps, implicit_diffusion_abs_eps
   namelist /probin_reactdiff/ cross_section, include_discrete_LMA_correction
   namelist /probin_reactdiff/ rate_const, rate_multiplier, stoichiometric_factors
-  namelist /probin_reactdiff/ n_steps_write_avg
+  namelist /probin_reactdiff/ n_steps_write_avg, hist_int
 
 contains
 
@@ -276,6 +279,11 @@ contains
           farg = farg + 1
           call get_command_argument(farg, value = fname)
           read(fname, *) n_steps_write_avg 
+
+       case ('--hist_int')
+          farg = farg + 1
+          call get_command_argument(farg, value = fname)
+          read(fname, *) hist_int
 
        case ('--D_Fick_1')
           farg = farg + 1
