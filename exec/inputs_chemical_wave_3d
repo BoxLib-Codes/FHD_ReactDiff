@@ -1,0 +1,186 @@
+&probin_common
+ 
+  ! Problem specification
+  !----------------------
+  dim_in = 3                           ! 3D 
+  prob_lo(1:3) = 0. 0. 0.              ! physical lo coordinate
+  prob_hi(1:3) = 512. 512. 512.        ! physical hi coordinate
+  n_cells(1:3) = 256 256 256           ! number of cells in domain
+  max_grid_size(1:3) = 64 64 64        ! max number of cells in a box
+
+  prob_type = 5                    ! sets the problem type (initial condition)
+                                   ! 0 thermodynamic equilibrium
+                                   ! 1 Gaussian distribution
+                                   ! 2 constant gradient
+                                   ! 3 1+sin^2(pi*x)*sin^2(pi*y)*sin^2(pi*z)
+                                   ! 4 vertical stripe
+                                   ! 5 bubble
+
+  ! Time-step control
+  !----------------------
+  fixed_dt = 0.25                      ! time step (if positive, fixed)
+  cfl = 0.5                            ! max diffusive cfl number (used if fixed_dt<0) to determine time step
+
+  ! Controls for number of steps between actions (for HydroGrid see below)
+  !----------------------
+  max_step = 1000                      ! maximum number of time steps
+  plot_int = 40                        ! interval for writing a plotfile (for visit/amrvis)
+                                       ! (no plot files for plot_int<=0)
+  chk_int = -1                         ! interval for writing a checkpoint
+                                       ! (no checkpoint files for chk_int<0)
+  restart = -1                         ! checkpoint restart number
+                                       ! (no restart for restart<0)
+  print_int = 4                        ! how often to output statistics
+                                       ! (no screen output for print_int<=0)
+
+  ! stochastic forcing amplitudes (1 for physical values, 0 to run them off)
+  variance_coef_mass = 1.   ! global scaling epsilon for stochastic mass forcing
+
+  ! Algorithm control / selection
+  !----------------------
+  ! random number seed
+  ! 0        = unpredictable seed based on clock
+  ! positive = fixed seed
+  seed = 0
+
+  ! Initial conditions
+  !----------------------
+  perturb_width = 16.       ! scale factor for perturbed part in initial profile (for prob_type=4,5)
+  smoothing_width = 2.      ! scale factor for smoothing initial profile (for prob_type=4,5)
+  initial_variance = 1.     ! multiplicative factor for initial fluctuations
+                            ! if negative, total mass fluctuation is set to zero (for integer_populations=F)
+
+  ! Boundary conditions
+  !----------------------
+  ! BC specifications:
+  ! -1 = periodic
+  ! 100 = no-slip wall      (Dir condition for normal vel; Dir velocity condition for trans vel)
+  ! 101 = no-slip reservoir (Dir condition for normal vel; Dir velocity condition for trans vel)
+  ! 200 = slip wall         (Dir condition for normal vel; Dir traction condition for trans vel)
+  ! 201 = slip reservoir    (Dir condition for normal vel; Dir traction condition for trans vel)
+  ! For a complete list see bc.f90
+  ! periodic
+  bc_lo(1:3) = -1 -1 -1
+  bc_hi(1:3) = -1 -1 -1
+
+/
+
+! reaction/diffusion number fraction code
+&probin_reactdiff
+
+  ! Random number generator
+  !----------------------
+  use_bl_rng = F                   ! if T, use F_BaseLib/bl_random RNGs
+                                   ! if F, use HydroGrid RNGs
+
+  ! if use_bl_rng=T, assign random number seeds for each physical process
+  ! (if use_bl_rng=F, use seed option above in probin_common)
+  ! for positive value, the value is assigned as seed value
+  ! for 0, a positive value is randomly chosen
+  ! if -1 (only for restart), RNGs status is restored from checkpoint data
+  seed_diffusion = 0 
+  seed_reaction = 0
+  seed_init = 0
+
+  ! Problem description
+  !----------------------
+  nspecies = 2             ! number of species
+  nreactions = 4           ! number of reactions
+
+  ! Control of algorithm
+  !----------------------
+  temporal_integrator = -4         ! 0=D + R (first-order splitting)
+                                   ! 1=(1/2)R + D + (1/2)R (Strang option 1)
+                                   ! 2=(1/2)D + R + (1/2)D (Strang option 2)
+                                   ! -1=unsplit forward Euler
+                                   ! -2=unsplit explicit midpoint
+                                   ! -3=unsplit multinomial diffusion
+                                   ! -4=unsplit implicit midpoint
+
+  diffusion_type = 3               ! only used for splitting schemes (temporal_integrator>=0)
+                                   ! 0=explicit trapezoidal predictor/corrector
+                                   ! 1=Crank-Nicolson semi-implicit
+                                   ! 2=explicit midpoint
+                                   ! 3=multinomial diffusion
+                                   ! 4=forward Euler
+
+  midpoint_stoch_flux_type = 3     ! only used for midpoint diffusion schemes (split as well as unsplit)
+                                   ! corrector formulation of noise
+                                   ! 1=K(nold) * W1 + K(nold)         * W2
+                                   ! 2=K(nold) * W1 + K(npred)        * W2
+                                   ! 3=K(nold) * W1 + K(2*npred-nold) * W2
+
+  reaction_type = 0                ! only used for splitting schemes (temporal_integrator>=0)
+                                   ! 0=first-order (deterministic, tau leaping, CLE, or SSA)
+                                   ! 1=second-order (deterministic, tau leaping, or CLE only)
+
+  use_Poisson_rng = 1              ! how to calculate chemical production rates
+                                   ! 2=SSA
+                                   ! 1=do tau leaping (Poisson increments)
+                                   ! 0= do CLE (Gaussian increments)
+                                   ! -1=do deterministic chemistry
+
+  inhomogeneous_bc_fix = F         ! use the Einkemmer boundary condition fix (split schemes only) 
+
+  avg_type = 1                     ! how to compute n on faces for stochastic weighting
+                                   ! 1=arithmetic (with C0-Heaviside), 2=geometric, 3=harmonic
+                                   ! 10=arithmetic average with discontinuous Heaviside function
+                                   ! 11=arithmetic average with C1-smoothed Heaviside function
+                                   ! 12=arithmetic average with C2-smoothed Heaviside function
+
+
+  ! Initial and boundary conditions
+  !----------------------
+  ! start near chemical equilibrium
+  !n_init_in(1,1:2) = 0, 10                 ! 0 stable state
+  !n_init_in(1,1:2) = 2.16245, 1.35018      ! + stable state (but unstable spatially)
+  !n_init_in(1,1:2) = 0.337546, 8.64982     ! - unstable state
+  n_init_in(1,1:2) = 2.16245, 1.35018       ! + stable state (but unstable spatially)               
+  n_init_in(2,1:2) = 0, 10                  ! 0 stable state
+
+  ! n_i boundary conditions (dir,lohi,species)
+  !n_bc(1,1,1:2) = 2.16245, 1.35018 ! Lower x fixed at + state
+  !n_bc(1,2,1:2) = 0, 10 ! Upper x at 0 state
+  !n_bc(1,2,1:2) = 2.16245, 1.35018 ! Lower x fixed at + state
+
+  model_file_init = 0                  ! initialize from model files:
+                                       ! 0=no, 1=usual order (Fortran), -1=transpose order (C)
+  !model_file(1)="./init1.dat"         ! one model file for each species
+  !model_file(2)="./init2.dat"
+
+  integer_populations = T              ! initialize with all number of molecules strictly integer
+
+  ! Diffusion:
+  ! -----------------
+  ! We want B to be diffusing 10 times faster than A
+  D_Fick(1:3) = 1. 10.
+  diffusion_stencil_order = 1          ! diffusion boundary stencil order
+  mg_verbose = 0                       ! implicit diffusion solve verbosity
+  cg_verbose = 0                       ! implicit diffusion solve bottom solver verbosity
+  implicit_diffusion_rel_eps = 1.e-10  ! relative eps for implicit diffusion solve
+  implicit_diffusion_abs_eps = -1.     ! absolute eps for implicit diffusion solve
+
+  ! Chemical reactions:
+  ! ------------------  
+  cross_section = 1000.                ! in 2D, thickness of cell
+                                       ! in general, dv = product(dx(1,1:dm))*cross_section
+
+  ! whether to compute chemical rates using classical LMA or integer-based one
+  include_discrete_LMA_correction = T
+
+  ! LMA chemical reaction rate for each reaction (assuming Law of Mass holds)
+  rate_const(1:4) = 4, 1.37, 1, 10 
+  rate_multiplier = 0.1                 ! Change all rates by a constant multiplier
+  
+  !     (1) A -> 0
+  !     (2) 2A + B --> 3A
+  !     (3) B --> 0
+  !     (4) 0 --> B
+  ! stoichiometric factors for each reaction (species,LHS(1)/RHS(2),reaction)
+  ! Species: A, B
+  stoichiometric_factors(1:2,1:2,1) = 1 0, 0 0 !  A -> 0
+  stoichiometric_factors(1:2,1:2,2) = 2 1, 3 0 !  2A + B --> 3A
+  stoichiometric_factors(1:2,1:2,3) = 0 1, 0 0 !  B --> 0
+  stoichiometric_factors(1:2,1:2,4) = 0 0, 0 1 !  0 --> B
+    
+/
