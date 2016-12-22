@@ -3,12 +3,14 @@ Authors: Andy J. Nonaka, Changho Kim (CCSE, Lawrence Berkeley Laboratory) and
          Aleksandar Donev (Courant Institute, NYU)
 Last updated: December 21st, 2016
 
-These codes use the BoxLib framework to develop a fluctuating hydrodynamics code for simulating stochastic reaction-diffusion systems.
-Rather than using a Langevin description based on Gaussian white noise, reactions are treated in an equivalent manner to the 
-reaction-diffusion master equation description.
+These codes use the BoxLib framework to develop a fluctuating hydrodynamics
+code for simulating stochastic reaction-diffusion systems. Rather than using a
+Langevin description based on Gaussian white noise, reactions are treated in an
+equivalent manner to the reaction-diffusion master equation description.
 
-Details can be found in the paper (see doc/FHD_ReactDiff.pdf *not yet*):
-1. "Fluctuating Hydrodynamics of Reaction-Diffusion Systems", C. Kim, A.J. Nonaka, J.B. Bell, A.L. Garcia, A. Donev, *TBA* [ArXiv: *TBA*].
+Details can be found in the paper (see doc/FHD_ReactDiff.pdf):
+1. "Fluctuating Hydrodynamics of Reaction-Diffusion Systems", 
+    C. Kim, A.J. Nonaka, J.B. Bell, A.L. Garcia, A. Donev, [ArXiv: 1612.07238].
 
 To compile the code, you need to also download the Fortran BoxLib library from
 https://github.com/BoxLib-Codes/BoxLib
@@ -18,15 +20,21 @@ exec/test/GNUMakefile
 and then do "make" to build the code.
 
 Example input files are provided in the directory exec:
-- inputs_Schlogl_1d is the steady state Schlogl model example described in Section V.A in Ref. [1]
-- inputs_BPM_2d is the Turing-like pattern formation example described in Section V.B in Ref. [1]
-- inputs_chemical_wave_3d is the spherical chemical wave propagation described in Section V.C in Ref. [1]
+- inputs_Schlogl_1d is the steady state Schlogl model example described in 
+   Section V.A in Ref. [1]
+- inputs_BPM_2d is the Turing-like pattern formation example described in
+   Section V.B in Ref. [1]
+- inputs_chemical_wave_3d is the spherical chemical wave propagation described
+   in Section V.C in Ref. [1]
 
-You can run these examples by providing the input filename after the executable, for example:
+You can run these examples by providing the input filename after the executable,
+for example:
 ./main.Linux.gfortran.mpi.exe inputs_Schlogl_1d
 mpiexec -n 4 ./main.Linux.gfortran.mpi.exe inputs_BPM_2d
 
-For the visulazation of results (BPM_2d and chemical_wave_3d), see Section "Visualization Using VisIt" in BoxLib User's Guide.
+For the visulazation of results (BPM_2d and chemical_wave_3d), see Section
+"Visualization Using VisIt" in BoxLib User's Guide.
 
 Caveats: 
-1) The code used to perform structure factor analysis is not included in this distribution.
+1) The code used to perform structure factor analysis is not included in this 
+    distribution.
