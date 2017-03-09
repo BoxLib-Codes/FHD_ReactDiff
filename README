@@ -10,7 +10,8 @@ equivalent manner to the reaction-diffusion master equation description.
 
 Details can be found in the paper (see doc/FHD_ReactDiff.pdf):
 1. "Fluctuating Hydrodynamics of Reaction-Diffusion Systems", 
-    C. Kim, A.J. Nonaka, J.B. Bell, A.L. Garcia, A. Donev, [ArXiv: 1612.07238].
+    C. Kim, A.J. Nonaka, J.B. Bell, A.L. Garcia, A. Donev,
+    to appear in J. Chem. Phys. [ArXiv: 1612.07238].
 
 To compile the code, you need to also download the Fortran BoxLib library from
 https://github.com/BoxLib-Codes/BoxLib
