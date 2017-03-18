@@ -1,7 +1,7 @@
 Fluctuating Hydrodynamics of Reaction-Diffusion Systems
 Authors: Andy J. Nonaka, Changho Kim (CCSE, Lawrence Berkeley Laboratory) and
          Aleksandar Donev (Courant Institute, NYU)
-Last updated: December 21st, 2016
+Last updated: March 17st, 2017
 
 These codes use the BoxLib framework to develop a fluctuating hydrodynamics
 code for simulating stochastic reaction-diffusion systems. Rather than using a
@@ -9,7 +9,8 @@ Langevin description based on Gaussian white noise, reactions are treated in an
 equivalent manner to the reaction-diffusion master equation description.
 
 Details can be found in the paper (see doc/FHD_ReactDiff.pdf):
-1. "Fluctuating Hydrodynamics of Reaction-Diffusion Systems", 
+1. "Stochastic Simulation of Reaction-Diffusion Systems: A Fluctuating-
+    Hydrodynamics Approach", 
     C. Kim, A.J. Nonaka, J.B. Bell, A.L. Garcia, A. Donev,
     to appear in J. Chem. Phys. [ArXiv: 1612.07238].
 
