@@ -1,7 +1,7 @@
 Fluctuating Hydrodynamics of Reaction-Diffusion Systems
 Authors: Andy J. Nonaka, Changho Kim (CCSE, Lawrence Berkeley Laboratory) and
          Aleksandar Donev (Courant Institute, NYU)
-Last updated: March 17st, 2017
+Last updated: April 14st, 2017
 
 These codes use the BoxLib framework to develop a fluctuating hydrodynamics
 code for simulating stochastic reaction-diffusion systems. Rather than using a
@@ -12,7 +12,7 @@ Details can be found in the paper (see doc/FHD_ReactDiff.pdf):
 1. "Stochastic Simulation of Reaction-Diffusion Systems: A Fluctuating-
     Hydrodynamics Approach", 
     C. Kim, A.J. Nonaka, J.B. Bell, A.L. Garcia, A. Donev,
-    to appear in J. Chem. Phys. [ArXiv: 1612.07238].
+    J. Chem. Phys. 146, 124110 (2017) [ArXiv: 1612.07238].
 
 To compile the code, you need to also download the Fortran BoxLib library from
 https://github.com/BoxLib-Codes/BoxLib
